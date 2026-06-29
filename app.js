@@ -1,20 +1,6 @@
 let names = ["Raj", "Yash", "Raja"];
 let currentAngle = 0;
-
-// document.getElementById('submit').addEventListener("click", () => {
-//     names = document.getElementById('names').value.split(',');
-//     loadCircle(names);
-//     document.getElementById('names').value = '';
-// });
-
-document.getElementById("spin-btn").addEventListener("click", () => {
-    if (names.length >= 1 && names[0] != "") {
-        document.getElementById("spin-btn").disabled = true;
-        spinSpeed = (Math.random() * 0.2 + 0.3);
-        spin();
-    }
-})
-
+let spinSpeed = 0;
 
 /*(0,0)──────────(400,0)
   │                  │
@@ -93,5 +79,33 @@ function loadCircle() {
     ctx.closePath();
 }
 
+function spin(){
+    if(spinSpeed>0.01){
+        currentAngle+=spinSpeed;
+        spinSpeed*=0.995;
+        loadCircle();
+        requestAnimationFrame(spin);
+    }
+    else{
+        document.getElementById("spin-btn").disabled = false;
+        document.getElementById("spin-btn").style.cursor = "pointer";
+    }
+}
+
 document.addEventListener("DOMContentLoaded", loadCircle);
 
+// document.getElementById('submit').addEventListener("click", () => {
+//     names = document.getElementById('names').value.split(',');
+//     loadCircle(names);
+//     document.getElementById('names').value = '';
+// });
+
+document.getElementById("spin-btn").addEventListener("click", () => {
+    if (names.length >= 1 && names[0] != "") {
+        let spinBtn = document.getElementById("spin-btn");
+        spinBtn.disabled = true;
+        spinBtn.style.cursor = "not-allowed";
+        spinSpeed = (Math.random() * 0.3 + 0.5);
+        spin();
+    }
+})

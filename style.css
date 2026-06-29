@@ -23,6 +23,7 @@ button {
     border-radius: 10px;
     font-size: large;
     font-weight: 500;
+    cursor:pointer;
 }
 
 #submit {
@@ -43,6 +44,12 @@ input {
     font-size: 16px;
 }
 
+#wheel-container {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
 #spin {
     position: fixed;
     bottom: 20px;
@@ -52,5 +59,9 @@ input {
     width:100px;
     color: snow;
     background-color:brown;
+}
 
+#pointer{
+    color:whitesmoke;
+    font-size: 50px;
 }
