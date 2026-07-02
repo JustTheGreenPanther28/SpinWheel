@@ -1,27 +1,28 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Wheel of names</title>
-    <link rel="stylesheet" href="style.css">
-    <script defer src="app.js"></script>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Wheel of Names</title>
+<link rel="stylesheet" href="style.css">
 </head>
-
 <body>
-    <div id="wheel-container">
 
-        <canvas id="wheel" width="400" height="400"></canvas>
-        <div id="pointer">◀</div>
-    </div>
-    <div id="input-section">
-        <input id="names" placeholder="Enter values">
-        <button id="submit">Submit</button>
-    </div>
-    <div id="spin">
-        <button id="spin-btn">Spin</button>
-    </div>
+  <div id="input-section">
+    <input id="names" placeholder="Enter names, comma separated">
+    <button id="submit">Submit</button>
+  </div>
+
+  <div id="wheel-container">
+    <canvas id="wheel" width="400" height="400"></canvas>
+    <div id="pointer"></div>
+  </div>
+
+  <div id="alert">
+    <div id="heading">WINNER</div>
+    <div id="alert-message"></div>
+  </div>
+
+  <script src="app.js"></script>
 </body>
-
 </html>
