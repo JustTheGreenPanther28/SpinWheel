@@ -1,22 +1,3 @@
-// ============================================================
-// Wheel of Names — clean rewrite
-//
-// Canvas angle convention (standard HTML canvas):
-//   angle 0     = 3 o'clock (east)
-//   angle PI/2  = 6 o'clock (south)   [angles increase CLOCKWISE
-//   angle PI    = 9 o'clock (west)     because the y-axis points down]
-//   angle 3PI/2 = 12 o'clock (north)
-//
-// The pointer is fixed on the LEFT side of the wheel (9 o'clock),
-// which is screen-angle PI. This is set in CSS (#pointer { left: -26px }).
-//
-// A slice drawn at LOCAL angle theta ends up, after ctx.rotate(currentAngle),
-// sitting at SCREEN angle (theta + currentAngle). So the winning slice is
-// whichever local angle theta satisfies:
-//      theta + currentAngle = PI   (mod 2*PI)
-//   -> theta = PI - currentAngle   (mod 2*PI)
-// ============================================================
-
 const TWO_PI = 2 * Math.PI;
 const CX = 200, CY = 200, RADIUS = 200;
 const COLORS = ["#4285F4", "#34A853", "#FBBC05", "#EA4335"];
@@ -62,20 +43,33 @@ function drawWheel() {
         ctx.lineWidth = 2;
         ctx.stroke();
 
-        // label
+        let fontSize = getFontSize()
         ctx.save();
         const midAngle = start + anglePerSlice / 2;
         ctx.translate(CX, CY);
         ctx.rotate(midAngle);
         ctx.fillStyle = "white";
-        ctx.font = "bold 18px Arial";
+        ctx.font = `bold ${fontSize}px Arial`;
         ctx.textBaseline = "middle";
-        ctx.fillText(names[i], RADIUS * 0.55, 0);
+        if (names[i].length >= 6) {
+            ctx.fillText(names[i].substring(0, 6) + "...", RADIUS * 0.45, 0);
+        }
+        else {
+            ctx.fillText(names[i], RADIUS * 0.45, 0);
+        }
         ctx.restore();
     }
 
     ctx.restore();
     drawHub();
+}
+
+function getFontSize() {
+    const n = names.length;
+    const base = 22;
+    const min = 9;
+    const size = base - (n - 1) * 1.3;
+    return Math.max(min, size);
 }
 
 function drawHub() {
@@ -100,14 +94,13 @@ function spinTick() {
         requestAnimationFrame(spinTick);
     } else {
         spinning = false;
-        setWheelEnabled(true);
         announceWinner();
     }
 }
 
 function announceWinner() {
     const winningIndex = getWinningIndex();
-    showAlert("WINNER", names[winningIndex]);
+    showAlert("WINNER", names[winningIndex], winningIndex);
 }
 
 function setWheelEnabled(enabled) {
@@ -115,7 +108,16 @@ function setWheelEnabled(enabled) {
     submitBtn.disabled = !enabled;
 }
 
-function showAlert(headingMsg, alertMsg) {
+function closeAlert(winBox) {
+    winBox.classList.add('closing');
+    winBox.addEventListener('transitionend', () => {
+        winBox.style.display = 'none';
+        winBox.classList.remove('closing');
+        setWheelEnabled(true);
+    }, { once: true });
+}
+
+function showAlert(headingMsg, alertMsg, index) {
     const winBox = document.getElementById("alert");
     const winnerText = document.getElementById("alert-message");
     const heading = document.getElementById("heading");
@@ -123,10 +125,25 @@ function showAlert(headingMsg, alertMsg) {
     winnerText.textContent = alertMsg;
     heading.textContent = headingMsg;
     winBox.style.display = "flex";
+    winBox.classList.remove('closing');
 
-    setTimeout(() => {
-        winBox.style.display = "none";
-    }, 4000);
+    const oldRemoveBtn = document.getElementById("remove");
+    const oldCancelBtn = document.getElementById("cancel");
+    const removeBtn = oldRemoveBtn.cloneNode(true);
+    const cancelBtn = oldCancelBtn.cloneNode(true);
+    oldRemoveBtn.replaceWith(removeBtn);
+    oldCancelBtn.replaceWith(cancelBtn);
+
+    removeBtn.addEventListener("click", () => {
+        names.splice(index, 1);
+        drawWheel();
+        closeAlert(winBox);
+    });
+
+    cancelBtn.addEventListener("click", () => {
+        drawWheel();
+        closeAlert(winBox);
+    });
 }
 
 const submitBtn = document.getElementById("submit");
